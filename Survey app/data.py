@@ -1,14 +1,14 @@
 #%%
 import pandas as pd
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/flightdata.csv')
+df = pd.read_csv('flightdata.csv')
 pd.set_option('display.max_columns', 31)
-
 
 # %%
 df.drop(columns=['Unnamed: 0','month', 'day','carrier',
        'flight', 'tailnum', 'origin', 'dest','time_hour', 'flightb','airport', 'lat', 'lon', 'alt', 'tz', 'dst', 'tzone'], inplace=True)
 # %%
 # df.head(5)
+# df.columns
 # %%
 # df.isnull().sum()
 # %%
@@ -28,3 +28,7 @@ data = df.copy()
 # %%
 # a = data[data["airline"] == "American Airlines Inc."]
 # a
+
+# %%
+# a = data[data['airline'] == 'American Airlines Inc.']
+# print(a)
