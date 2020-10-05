@@ -1,14 +1,17 @@
-from logging import INFO
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+from dash_html_components.Div import Div
 import pandas as pd
 import plotly.express as px
+import pathlib
+from app import app
 
-app = dash.Dash(__name__)
+PATH = pathlib.Path(__file__).parent
+DATA_PATH = PATH.joinpath("../datasets").resolve()
 
-data = pd.read_csv("datasets/intro_bees.csv")
+data = pd.read_csv(DATA_PATH.joinpath("intro_bees.csv"))
 data = data.groupby(["State", "Year", "Affected by", "state_code"])[["Pct of Colonies Impacted"]].mean()
 data.reset_index(inplace=True)
 # print(data[:5])
@@ -16,26 +19,34 @@ data.reset_index(inplace=True)
 cause = data["Affected by"].unique()
 states = data["State"].unique()
 
-app.layout = html.Div([
+layout = html.Div([
 
     html.H1("Web Dashboard for Impacted Bee Colonies", style={'text-align':'center'}),
     html.H3("(Based on Cities and reason of impact)", style={'text-align':'center'}),
 
-    html.H4("Choose the cities"),
-    dcc.Dropdown(id="select-cities",
-                options=[{'label':x, 'value':x} for x in states],
-                value= ['Alabama'],
-                multi=True,
-                style={'width':'75%'}
-                ),
+    html.Div([
+        html.Div([
+            html.Pre(children="Choose the cities"),
+            dcc.Dropdown(id="select-cities",
+                        options=[{'label':x, 'value':x} for x in states],
+                        value= ['Alabama'],
+                        multi=True,
+                        clearable=False,
+                        style={'width':'75%'}
+                        )
+                ], className='six columns'),
 
-    html.H4("Select the reason"),
-    dcc.Dropdown(id="select-reason",
-                options=[{'label':x, 'value':x} for x in cause],
-                value= 'Disease',
-                multi=False,
-                style={'width':'40%'}
-                ),
+        html.Div([
+            html.Pre(children="Select the reason"),
+            dcc.Dropdown(id="select-reason",
+                        options=[{'label':x, 'value':x} for x in cause],
+                        value= 'Disease',
+                        multi=False,
+                        clearable=False,
+                        style={'width':'40%'}
+                        ),
+                ], className='six columns'),
+    ], className='row'),
 
     html.Div(id='container-output', children=[]),
     html.Br(),
@@ -72,5 +83,3 @@ def line_chart(select_cities, select_reason):
     return container, fig
 
 
-if __name__ == "__main__":
-    app.run_server(debug=True)
