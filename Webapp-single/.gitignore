@@ -1,0 +1,7 @@
+Lib
+Scripts
+*.cfg
+Include
+share
+etc
+*.pyc
